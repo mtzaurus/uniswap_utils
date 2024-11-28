@@ -5,83 +5,83 @@ var config = require("../config");
 const uniswapRouterABI = [
     {
         "inputs": [
-          {
-            "internalType": "address",
-            "name": "tokenA",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenB",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountADesired",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountBDesired",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountAMin",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountBMin",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "to",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "deadline",
-            "type": "uint256"
-          }
+            {
+                "internalType": "address",
+                "name": "tokenA",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "tokenB",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amountADesired",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amountBDesired",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amountAMin",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amountBMin",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "deadline",
+                "type": "uint256"
+            }
         ],
         "name": "addLiquidity",
         "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "amountA",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountB",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "liquidity",
-            "type": "uint256"
-          }
+            {
+                "internalType": "uint256",
+                "name": "amountA",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amountB",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "liquidity",
+                "type": "uint256"
+            }
         ],
         "stateMutability": "nonpayable",
         "type": "function"
-      },
-      {
+    },
+    {
         "inputs": [
-          
+
         ],
         "name": "factory",
         "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
         ],
         "stateMutability": "view",
         "type": "function"
-      }
+    }
 ];
 
 const erc20TokenABI = [
@@ -168,15 +168,15 @@ const uniswapPoolABI = [
     {
         "constant": true,
         "inputs": [
-          
+
         ],
         "name": "token0",
         "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
         ],
         "payable": false,
         "stateMutability": "view",
@@ -185,15 +185,15 @@ const uniswapPoolABI = [
     {
         "constant": true,
         "inputs": [
-          
+
         ],
         "name": "token1",
         "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
         ],
         "payable": false,
         "stateMutability": "view",
@@ -202,25 +202,25 @@ const uniswapPoolABI = [
     {
         "constant": true,
         "inputs": [
-          
+
         ],
         "name": "getReserves",
         "outputs": [
-          {
-            "internalType": "uint112",
-            "name": "_reserve0",
-            "type": "uint112"
-          },
-          {
-            "internalType": "uint112",
-            "name": "_reserve1",
-            "type": "uint112"
-          },
-          {
-            "internalType": "uint32",
-            "name": "_blockTimestampLast",
-            "type": "uint32"
-          }
+            {
+                "internalType": "uint112",
+                "name": "_reserve0",
+                "type": "uint112"
+            },
+            {
+                "internalType": "uint112",
+                "name": "_reserve1",
+                "type": "uint112"
+            },
+            {
+                "internalType": "uint32",
+                "name": "_blockTimestampLast",
+                "type": "uint32"
+            }
         ],
         "payable": false,
         "stateMutability": "view",
@@ -232,24 +232,24 @@ const uniswapFactoryABI = [
     {
         "constant": true,
         "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
         ],
         "name": "getPair",
         "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
         ],
         "payable": false,
         "stateMutability": "view",
@@ -422,7 +422,7 @@ async function create_pool(provider, wallet) {
     console.log("\nToken transfer successfully approved, creating a pool with the following reserves:");
     console.log(`${symbol1}: ${token_reserve1}`);
     console.log(`${symbol2}: ${token_reserve2}`);
-    console.log("Current pool price: " + (token_reserve1 / token_reserve2));
+    console.log("Current pool price: " + (parseFloat(token_reserve2) / parseFloat(token_reserve1)));
 
     var yes = readline.question("\n Create a pool ? [Y/N]");
     if (yes != "Y" && yes != "y") {
@@ -451,7 +451,7 @@ async function create_pool(provider, wallet) {
             console.log("New UniswapV2 pool created successfully !");
             break;
         } catch (e) {
-            if (i == 0) { 
+            if (i == 0) {
                 console.log("Failed to create a new UniswapV2 pool");
                 console.log(e);
                 return 1;

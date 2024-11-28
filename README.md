@@ -10,12 +10,19 @@ via PATH environment. Check accessibility of the binaries using the following
 shell commands (actual software versions may differ).
 
 ```console
-% node --version
-v21.7.1
-% npm --version
-10.5.0
-npx --version
-10.5.0
+# List all available nvm versions
+nvm ls available
+
+# From CURRENT
+node -v # should print v21.7.1
+npm -v # should print 10.5.0
+npx -v # should print 10.5.0
+
+# Also tested on LTS version:
+node -v # should print v22.11.0
+npm -v # should print 10.9.1
+npx -v # should print 10.2.2
+
 ```
 
 ## Node packages
@@ -23,7 +30,7 @@ npx --version
 Install required Node packages:
 
 ```console
-% npm install --save-dev hardhat ethers readline-sync
+% npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox @openzeppelin/contracts ethers readline-sync
 ```
 
 In order to start using utilities from this repository, the following Node.JS
@@ -76,7 +83,7 @@ USDT#TestToken - 0x5FbDB2315678afecb367f032d93F642f64180aa3
 ### Sepolia test network
 
 In order to deploy target token contract on Sepolia test network, modify config.js
-to configure WALLET_ADDRESS and WALLET_PRIVATE_KEY to be used for interation with
+to configure WALLET_ADDRESS and WALLET_PRIVATE_KEY to be used for interaction with
 Sepolia testnet. Make sure you have enough Sepolia ETH in your wallet to deploy
 smart contracts (0.5 ETH should be enough). Once deployment finishes, token address
 will be displayed on the screen.
