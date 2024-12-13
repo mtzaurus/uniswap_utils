@@ -384,8 +384,6 @@ async function managePool(provider, wallet, isReplenish) {
     const poolAddr = await checkPoolExistence(factoryContract, token1Addr, token2Addr);
     if (poolAddr) {
         var poolAddress = await factoryContract.getPair(token1Addr, token2Addr);
-        console.log("Pool address: " + poolAddress);
-
         // Access pool contract to get current pool reserves.
         const uniswapPool = new ethers.Contract(poolAddress, uniswapPoolABI, provider);
         const poolContract = uniswapPool.connect(wallet);
@@ -420,6 +418,13 @@ async function managePool(provider, wallet, isReplenish) {
 
     console.log("Proceeding with liquidity operation...");
     await executeLiquidityOperation(routerContract, token1Addr, token2Addr, tokenReserve1, tokenReserve2, config.WALLET_ADDRESS);
+    const poolAddrAfterSwap = await checkPoolExistence(factoryContract, token1Addr, token2Addr);
+    if (poolAddrAfterSwap) {
+        var poolAddress = await factoryContract.getPair(token1Addr, token2Addr);
+        console.log(`Pool address created: ${poolAddress}`);
+        console.log(`Token 1: ${token1.symbol} Added to the pool ${tokenReserve1}`);
+        console.log(`Token 1: ${token2.symbol} Added to the pool ${tokenReserve2}`);
+    }
 
     console.log("Liquidity operation completed.");
 }
