@@ -306,7 +306,7 @@ async function getTokenDetails(provider, wallet, tokenAddr) {
     return { contract, symbol, decimals, balance };
 }
 
-async function approveToken(contract, symbol, amount, walletAddress) {
+async function approveToken(contract, symbol, amount) {
     for (let i = 10; i >= 0; i--) {
         try {
             console.log(`Approving token ${symbol} transfer (${amount} tokens to approve)...`);
@@ -381,10 +381,25 @@ async function managePool(provider, wallet, isReplenish) {
     const token1 = await getTokenDetails(provider, wallet, token1Addr);
     const token2 = await getTokenDetails(provider, wallet, token2Addr);
 
-    console.log(`Token 1: ${token1.symbol}, Balance: ${token1.balance}`);
-    console.log(`Token 2: ${token2.symbol}, Balance: ${token2.balance}`);
-
     const poolAddr = await checkPoolExistence(factoryContract, token1Addr, token2Addr);
+    if (poolAddr) {
+        var poolAddress = await factoryContract.getPair(token1Addr, token2Addr);
+        console.log("Pool address: " + poolAddress);
+
+        // Access pool contract to get current pool reserves.
+        const uniswapPool = new ethers.Contract(poolAddress, uniswapPoolABI, provider);
+        const poolContract = uniswapPool.connect(wallet);
+
+        var reserves = await poolContract.getReserves();
+        const pool_reserve1 = reserves[0];
+        const pool_reserve2 = reserves[1];
+
+        console.log(`Token 1: ${token1.symbol}, Balance: ${token1.balance} Pool reserve: ${pool_reserve1}`);
+        console.log(`Token 2: ${token2.symbol}, Balance: ${token2.balance} Pool reserve: ${pool_reserve2}`);
+    } else {
+        console.log(`Token 1: ${token1.symbol}, Balance: ${token1.balance}`);
+        console.log(`Token 2: ${token2.symbol}, Balance: ${token2.balance}`);
+    }
 
     if (!isReplenish && poolAddr) {
         console.log("Pool already exists, creation aborted.");
@@ -400,8 +415,8 @@ async function managePool(provider, wallet, isReplenish) {
     const tokenReserve1 = BigInt(poolReserves[0]);
     const tokenReserve2 = BigInt(poolReserves[1]);
 
-    await approveToken(token1.contract, token1.symbol, tokenReserve1, config.WALLET_ADDRESS);
-    await approveToken(token2.contract, token2.symbol, tokenReserve2, config.WALLET_ADDRESS);
+    await approveToken(token1.contract, token1.symbol, tokenReserve1);
+    await approveToken(token2.contract, token2.symbol, tokenReserve2);
 
     console.log("Proceeding with liquidity operation...");
     await executeLiquidityOperation(routerContract, token1Addr, token2Addr, tokenReserve1, tokenReserve2, config.WALLET_ADDRESS);
