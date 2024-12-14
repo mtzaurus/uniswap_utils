@@ -421,9 +421,9 @@ async function managePool(provider, wallet, isReplenish) {
     const poolAddrAfterSwap = await checkPoolExistence(factoryContract, token1Addr, token2Addr);
     if (poolAddrAfterSwap) {
         var poolAddress = await factoryContract.getPair(token1Addr, token2Addr);
-        console.log(`Pool address created: ${poolAddress}`);
+        console.log(`Uniswap v2 pool tokens added for pool address: ${poolAddress}`);
         console.log(`Token 1: ${token1.symbol} Added to the pool ${tokenReserve1}`);
-        console.log(`Token 1: ${token2.symbol} Added to the pool ${tokenReserve2}`);
+        console.log(`Token 2: ${token2.symbol} Added to the pool ${tokenReserve2}`);
     }
 
     console.log("Liquidity operation completed.");
