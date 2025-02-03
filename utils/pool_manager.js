@@ -1,3 +1,5 @@
+v3 = require('./v3');
+
 const ethers = require("ethers");
 var readline = require('readline-sync');
 var config = require("../config");
@@ -430,14 +432,17 @@ async function managePool(provider, wallet, isReplenish) {
 }
 
 // Usage examples:
-async function createPool(provider, wallet) {
+async function createV2Pool(provider, wallet) {
     await managePool(provider, wallet, false);
 }
 
-async function replenishPool(provider, wallet) {
+async function replenishV2Pool(provider, wallet) {
     await managePool(provider, wallet, true);
 }
 
+async function createV3Pool(provider, wallet) {
+    await managePool(provider, wallet, false);
+}
 
 async function main() {
     // Make sure has properly configured wallet/private key. 
@@ -454,13 +459,19 @@ async function main() {
     console.log("Which action would you like to perform ?\n");
     console.log("(1) Create new UniswapV2 pool with initial liquidity.");
     console.log("(2) Replenish existing UniswapV2 pool.");
+    console.log("(3) Create new empty UniswapV3 pool.");
+    console.log("(4) Initialize UniswapV3 pool with initial liquidity.");
     console.log("(0) Exit.")
 
-    switch (readline.question("\nPlease select 1, 2 or 0: ")) {
+    switch (readline.question("\nPlease select one of the options above: ")) {
         case "1":
-            return await createPool(provider, connectedWallet);
+            return await createV2Pool(provider, connectedWallet);
         case "2":
-            return await replenishPool(provider, connectedWallet);
+            return await replenishV2Pool(provider, connectedWallet);
+        case "3":
+            return await v3.createPool(provider, connectedWallet);
+        case "4":
+            return await v3.InitializePool(provider, connectedWallet);
         case "0":
             console.log("No action selected, exiting");
             break;

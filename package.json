@@ -1,9 +1,14 @@
 {
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@openzeppelin/contracts": "^5.1.0",
-    "ethers": "^6.13.4",
-    "hardhat": "^2.22.17",
+    "@openzeppelin/contracts": "^5.2.0",
+    "@uniswap/v3-sdk": "^3.24.0",
+    "ethers": "^6.13.5",
+    "hardhat": "^2.22.18",
     "readline-sync": "^1.4.10"
+  },
+  "dependencies": {
+    "bignumber": "^1.1.0",
+    "bignumber.js": "^9.1.2"
   }
 }
