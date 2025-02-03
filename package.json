@@ -3,7 +3,7 @@
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@openzeppelin/contracts": "^5.1.0",
     "ethers": "^6.13.4",
-    "hardhat": "^2.22.16",
+    "hardhat": "^2.22.17",
     "readline-sync": "^1.4.10"
   }
 }
