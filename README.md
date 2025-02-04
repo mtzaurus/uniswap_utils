@@ -30,7 +30,7 @@ npx -v # should print 10.2.2
 In order to start using utilities from this repository, the following Node.JS packages are required:
 
 ```console
-% npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox @openzeppelin/contracts ethers readline-sync
+% npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox @openzeppelin/contracts ethers readline-sync @uniswap/v3-sdk bignumber.js
 ```
 
 
