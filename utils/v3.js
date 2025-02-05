@@ -561,6 +561,8 @@ async function createPool(provider, wallet) {
         var pool_token1 = await poolContract.token1();
         var liquidity = await poolContract.liquidity();
 
+        console.log('Uniswap V3 pool already exists for target tokens / fee level');
+        console.log(`Pool address: ${poolAddress}`);
         console.log(`Token 0: ${pool_token0}, Token 1: ${pool_token1}, Liquidity: ${liquidity}`);
         return;
     }
