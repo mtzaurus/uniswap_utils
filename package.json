@@ -8,7 +8,13 @@
     "readline-sync": "^1.4.10"
   },
   "dependencies": {
+    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
+    "@metaplex-foundation/umi": "^1.2.0",
+    "@metaplex-foundation/umi-bundle-defaults": "^1.2.0",
+    "@raydium-io/raydium-sdk-v2": "^0.1.128-alpha",
+    "@solana/spl-token-metadata": "^0.1.6",
     "bignumber": "^1.1.0",
-    "bignumber.js": "^9.1.2"
+    "bignumber.js": "^9.1.2",
+    "decimal.js": "^10.5.0"
   }
 }
