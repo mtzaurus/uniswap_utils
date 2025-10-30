@@ -259,8 +259,53 @@ const uniswapFactoryABI = [
     }
 ];
 
-const uniswapRouterAddress = "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008";
-const uniswapFactoryAddress = "0x7E0987E5b3a30e3f2828572Bb659A548460a3003";
+const DEX = {
+  UNISWAP: "Uniswap",
+  PANCAKESWAP: "PancakeSwap"
+};
+
+const DEX_ID = {
+  "1": DEX.UNISWAP,
+  "2": DEX.PANCAKESWAP
+}
+
+function selectDex(){
+  console.log("\nSelect DEX for pool management:");
+    console.log("(1) Uniswap V2");
+    console.log("(2) PancakeSwap V2");
+    console.log("(0) Exit.");
+
+    let dex;
+    while (true) {
+      dexChoice = readline.question("\nEnter your choice: ");
+
+      if (dexChoice === "0") {
+        process.exit(1);
+      }
+
+      if (!(DEX_ID[dexChoice])) {
+        console.log("Invalid choice, try again.");
+        continue;
+      }
+
+      dex = DEX_ID[dexChoice];
+      break;
+    }
+    
+
+    console.log(`Selected DEX: ${dex}`);
+    return dex;
+}
+
+const FACTORY_ADDRESSES = {
+  [DEX.UNISWAP]: "0x7E0987E5b3a30e3f2828572Bb659A548460a3003",
+  [DEX.PANCAKESWAP]: "0x6725F303b657a9451d8BA641348b6761A6CC7a17"
+};
+
+const ROUTER_ADDRESSES = {
+    [DEX.UNISWAP]: "0xC532a74256D3Db42D0Bf7a0400fEFDbad7694008",
+    [DEX.PANCAKESWAP]: "0xD99D1c33F9fC3444f8101754aBC46c52416550D1"
+}
 
 function readTokenAmounts(token1, token1Max, token2, token2Max) {
 
@@ -308,7 +353,7 @@ async function getTokenDetails(provider, wallet, tokenAddr) {
     return { contract, symbol, decimals, balance };
 }
 
-async function approveToken(contract, symbol, amount) {
+async function approveToken(uniswapRouterAddress, contract, symbol, amount) {
     for (let i = 10; i >= 0; i--) {
         try {
             console.log(`Approving token ${symbol} transfer (${amount} tokens to approve)...`);
@@ -370,6 +415,11 @@ async function executeLiquidityOperation(routerContract, token1Addr, token2Addr,
 }
 
 async function managePool(provider, wallet, isReplenish) {
+    const selectedDex = selectDex();
+
+    const uniswapRouterAddress = ROUTER_ADDRESSES[selectedDex];
+    const uniswapFactoryAddress = FACTORY_ADDRESSES[selectedDex];
+
     const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterABI, provider);
     const routerContract = uniswapRouter.connect(wallet);
     const uniswapFactory = new ethers.Contract(uniswapFactoryAddress, uniswapFactoryABI, provider);
@@ -415,8 +465,8 @@ async function managePool(provider, wallet, isReplenish) {
     const tokenReserve1 = BigInt(poolReserves[0]);
     const tokenReserve2 = BigInt(poolReserves[1]);
 
-    await approveToken(token1.contract, token1.symbol, tokenReserve1);
-    await approveToken(token2.contract, token2.symbol, tokenReserve2);
+    await approveToken(uniswapRouterAddress, token1.contract, token1.symbol, tokenReserve1);
+    await approveToken(uniswapRouterAddress, token2.contract, token2.symbol, tokenReserve2);
 
     console.log("Proceeding with liquidity operation...");
     await executeLiquidityOperation(routerContract, token1Addr, token2Addr, tokenReserve1, tokenReserve2, config.WALLET_ADDRESS);
