@@ -5,9 +5,25 @@ const BigNumber = require("bignumber.js");
 var readline = require('readline-sync');
 var config = require("../config");
 
-const uniswapRouterAddress = "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD";
-const uniswapFactoryAddress = "0x0227628f3F023bb0B980b67D528571c95c6DaC1c";
-const nonFungiblePositionManager = "0x1238536071E1c677A632429e3655c799b22cDA52";
+const DEX = {
+  UNISWAP: "Uniswap",
+  PANCAKESWAP: "PancakeSwap"
+};
+
+const DEX_ID = {
+  "1": DEX.UNISWAP,
+  "2": DEX.PANCAKESWAP
+}
+
+const FACTORY_ADDRESSES = {
+  [DEX.UNISWAP]: "0x0227628f3F023bb0B980b67D528571c95c6DaC1c",
+  [DEX.PANCAKESWAP]: "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865"
+};
+
+const NON_FUNGIBLE_POSITION_MANAGER_ADDRESSES = {
+  [DEX.UNISWAP]: "0x1238536071E1c677A632429e3655c799b22cDA52",
+  [DEX.PANCAKESWAP]: "0x1238536071E1c677A632429e3655c799b22cDA52"
+};
 
 const erc20TokenABI = [
     {
@@ -286,6 +302,23 @@ const uniswapPoolAbi = [
         "stateMutability": "view",
         "type": "function"
     },
+
+    {
+      "inputs": [],
+      "name": "tickSpacing",
+      "outputs": [{ "internalType": "int24", "name": "", "type": "int24" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+
+    {
+      "inputs": [],
+      "name": "fee",
+      "outputs": [{ "internalType": "uint24", "name": "", "type": "uint24" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+
     {
         "inputs": [
           {
@@ -437,7 +470,14 @@ const nonFungiblePositionManagerAbi = [
         ],
         "stateMutability": "payable",
         "type": "function"
-      }
+      },
+      {
+      "inputs": [],
+      "name": "factory",
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+      "stateMutability": "view",
+      "type": "function"
+    }
 ];
 
 async function checkPoolExistence(factoryContract, token1Addr, token2Addr, feeLevel) {
@@ -502,8 +542,8 @@ async function executePoolCreation(factoryContract, token1Addr, token2Addr, feeL
     console.log("Creating a new UniswapV3 pool ...");
     try {
         const tx = await factoryContract.createPool(
-            token1Addr,
             token2Addr,
+            token1Addr,
             feeLevel
         );
         const receipt = await tx.wait();
@@ -515,7 +555,17 @@ async function executePoolCreation(factoryContract, token1Addr, token2Addr, feeL
     }
 }
 
-function getPoolFeeLevel() {
+function getPoolFeeLevel(dex){
+    if (dex === DEX.UNISWAP) {
+        return getPoolFeeLevelUniswap();
+    } else if (dex === DEX.PANCAKESWAP) {
+        return getPoolFeeLevelPancakeswap();
+    } else {
+      throw new Error("Unsupported DEX selected.");
+    }
+}
+
+function getPoolFeeLevelUniswap() {
     console.log("\nPlease select pool fee level:");
     console.log("(1) 1%");
     console.log("(2) 0.3%");
@@ -536,7 +586,60 @@ function getPoolFeeLevel() {
     }
 }
 
+function getPoolFeeLevelPancakeswap() {
+    console.log("\nPlease select pool fee level:");
+    console.log("(1) 1%");
+    console.log("(2) 0.25%");
+    console.log("(3) 0.05%");
+    console.log("(4) 0.01%");
+    console.log("(0) Exit.")
+    switch (readline.question("\nSelected fee level: ")) {
+        case "1":
+            return 10000;
+        case "2":
+            return 2500;
+        case "3":
+            return 500;
+        case "4":
+            return 100;
+        case "0":
+            process.exit(1);
+    }
+}
+
+function selectDex(){
+  console.log("\nSelect DEX for pool management:");
+    console.log("(1) Uniswap V3");
+    console.log("(2) PancakeSwap V3");
+    console.log("(0) Exit.");
+
+    let dex;
+    while (true) {
+      dexChoice = readline.question("\nEnter your choice: ");
+
+      if (dexChoice === "0") {
+        process.exit(1);
+      }
+
+      if (!(DEX_ID[dexChoice])) {
+        console.log("Invalid choice, try again.");
+        continue;
+      }
+
+      dex = DEX_ID[dexChoice];
+      break;
+    }
+    
+
+    console.log(`Selected DEX: ${dex}`);
+    return dex;
+}
+
 async function createPool(provider, wallet) {
+    const selectedDex = selectDex();
+
+    const uniswapFactoryAddress = FACTORY_ADDRESSES[selectedDex];
+
     const uniswapFactory = new ethers.Contract(uniswapFactoryAddress, uniswapFactoryABI, provider);
     const factoryContract = uniswapFactory.connect(wallet);
 
@@ -545,7 +648,7 @@ async function createPool(provider, wallet) {
     const token1Addr = readline.question("Enter address of the first token: ");
     const token2Addr = readline.question("Enter address of the second token: ");
 
-    var feeLevel = getPoolFeeLevel();
+    var feeLevel = getPoolFeeLevel(selectedDex);
 
     const token1 = await getTokenDetails(provider, wallet, token1Addr);
     const token2 = await getTokenDetails(provider, wallet, token2Addr);
@@ -646,6 +749,11 @@ async function executeInitializePool(poolContract, price, tokenA_decimals, token
 }
 
 async function InitializePool(provider, wallet) {
+    const selectedDex = selectDex();
+
+    const uniswapFactoryAddress = FACTORY_ADDRESSES[selectedDex];
+    const nonFungiblePositionManager = NON_FUNGIBLE_POSITION_MANAGER_ADDRESSES[selectedDex];
+
     console.log("\nTo manage a UniswapV3 pool, you need to provide token addresses.\n");
 
     const token1Addr = readline.question("Enter address of the first token: ");
@@ -654,7 +762,7 @@ async function InitializePool(provider, wallet) {
     const token1 = await getTokenDetails(provider, wallet, token1Addr);
     const token2 = await getTokenDetails(provider, wallet, token2Addr);
     
-    var feeLevel = getPoolFeeLevel();
+    var feeLevel = getPoolFeeLevel(selectedDex);
 
     const uniswapFactory = new ethers.Contract(uniswapFactoryAddress, uniswapFactoryABI, provider);
     const factoryContract = uniswapFactory.connect(wallet);
@@ -673,6 +781,8 @@ async function InitializePool(provider, wallet) {
     let uniswapPool = new ethers.Contract(poolAddress, uniswapPoolAbi, provider);
     const poolContract = uniswapPool.connect(wallet);
     const [sqrtPriceX96, tick, tickSpacing] = await poolContract.slot0();
+
+    const spacing = Number(await poolContract.tickSpacing());
 
     var poolToken0 = await poolContract.token0();
     var poolToken1 = await poolContract.token1();
@@ -716,7 +826,7 @@ async function InitializePool(provider, wallet) {
     // Initialize pool before using it.
     const qa = new BigNumber(op_tokenA_amount);
     const qb = new BigNumber(op_tokenB_amount);
-    let price = qa / qb;
+    let price = qb / qa;
 
     await executeInitializePool(poolContract, price, Number(op_tokenA_decimals), Number(op_tokenB_decimals));
 
@@ -727,8 +837,13 @@ async function InitializePool(provider, wallet) {
     );
     const positionManagerContract = positionManager.connect(wallet);
 
-    const tickLower = -887220;  // Min tick
-    const tickUpper = 887220;   // Max tick
+
+    const MIN_TICK = -887272;
+    const MAX_TICK =  887272;
+    const align = (t, s) => Math.trunc(t / s) * s;
+
+    const tickLower = align(MIN_TICK, spacing);
+    const tickUpper = align(MAX_TICK, spacing);
 
     // Mint the position
     for (let i = 10; i >= 0; i--) {
